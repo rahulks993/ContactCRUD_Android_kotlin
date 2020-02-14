@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Contact</string>
+    <string name="btn_show_toast">ShowToast</string>
+    <string name="et_enter_msg">EnterMessage</string>
+    <string name="btn_move_to_next_activity">NextActivity</string>
+    <string name="btn_share_to_apps">Share To Other Apps</string>
+    <string name="btn_contacts">Contacts</string>
+    <string name="send_to">Share</string>
+    <string name="btn_dynamic_link">Dynamic Link</string>
+</resources>
