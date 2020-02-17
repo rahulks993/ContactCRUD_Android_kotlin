@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //For dyanmic link testing, so the action is plain. Since the app is not present in the play Store. The link will redirect to Youtube
         btnDynamic.setOnClickListener {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        //Sending a Text message to the next activity
         btnSendMsgToNextActivity.setOnClickListener {
             val message: String = etUserMessage.text.toString()
             val intent = Intent(this, SecondActivity::class.java)
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        //BUtton for sharing via intents. Basically to understand intent sharing
         btnShareToOtherApps.setOnClickListener {
 
             val message: String = etUserMessage.text.toString()
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intent, "Please select app: "))
         }
 
+        //This button takes to the next activity where you can see the contacts list there.
         btnRecyclerViewDemo.setOnClickListener {
 
             val intent = Intent(this, ContactsActivity::class.java)
@@ -59,7 +63,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun buildDynamicLink( /*String link, String description, String titleSocial, String source*/): String? {
+    //Building the dynamic link using Firebase
+    private fun buildDynamicLink(): String? {
         val path = FirebaseDynamicLinks.getInstance().createDynamicLink()
             .setDomainUriPrefix("contactcrud.page.link/6RQi")
             .setLink(Uri.parse("https://www.youtube.com/user/CokeStudioPk"))
