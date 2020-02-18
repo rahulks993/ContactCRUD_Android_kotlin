@@ -10,10 +10,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.regex.Pattern
 
 
 class Add_EditContactsActivity : AppCompatActivity() {
@@ -42,9 +45,9 @@ class Add_EditContactsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(com.example.contactcrud.R.layout.edit_contacts)
 
+        ///To enable and disable three dot menu
         isShowOptionsItem = false
         invalidateOptionsMenu()
-
 
         //Onclick of add Icon
         val add_action: Boolean = intent.getBooleanExtra("1", true)
@@ -98,24 +101,37 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
         }
 
-        ///On click of the saving the  contact
+        ///On click of the saving the  contact for add FAB and sending the data to the next activity
         buttonSave.setOnClickListener {
+            ///Email validations
+            val addMl = findViewById<EditText>(R.id.editTextMail)
+            val adEmail = addMl.text.toString().trim()
+            val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
             val intent = Intent()
             intent.putExtra("Name", editTextName.text.toString())
             intent.putExtra("Number", editTextPhone.text.toString())
-            intent.putExtra("Email", editTextMail.text.toString())
+//            intent.putExtra("Email", editTextMail.text.toString())
             if (imageBit != null) {
                 val path = saveImage(imageBit!!)
                 intent.putExtra("imagePath", path)
             }
-            setResult(Activity.RESULT_OK, intent)
-            Log.d(TAG, "Data sent for add from Add ContactsActivity onClick of Button Save")
-            Toast.makeText(this, "Contact Added", Toast.LENGTH_LONG).show()
-            finish()
+
+            ///Mail validation
+            if(!adEmail.matches(emailPattern.toRegex())){
+                addMl.requestFocus()
+                addMl.setError("Enter valid mail ID")
+            }
+            else {
+                intent.putExtra("Email",adEmail)
+                setResult(Activity.RESULT_OK, intent)
+                Log.d(TAG, "Data sent for add from Add ContactsActivity onClick of Button Save")
+                Toast.makeText(this, "Contact Added", Toast.LENGTH_LONG).show()
+                finish()
+            }
 
         }
 
-        ///for editing a contact on click of edit
+        ///for editing a contact on click of edit FAB
         fab2.setOnClickListener {
             Log.d(TAG, "Edit icon clicked from the contact card")
             isShowOptionsItem = false
@@ -126,8 +142,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
             editTextName.visibility = View.VISIBLE
             editTextPhone.visibility = View.VISIBLE
             editTextMail.visibility = View.VISIBLE
-//            imageButton.visibility = View.VISIBLE
-//            image1.visibility = View.GONE
+
             fab2.hide()
             buttonSave.visibility = View.VISIBLE
             image1.setOnClickListener { showPictureDialog() }    ////For adding image onClick of edit imagebutton
@@ -140,18 +155,28 @@ class Add_EditContactsActivity : AppCompatActivity() {
             }
             buttonSave.setOnClickListener {
                 Toast.makeText(this, "Contact Edited", Toast.LENGTH_LONG).show()
+                ///Email validations
+                val editMl = findViewById<EditText>(R.id.editTextMail)
+                val edEmail = editMl.text.toString().trim()
+                val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"    ///Regex expression to check the mail expression
                 val returnIntent = Intent()
                 returnIntent.putExtra("postion", intent.getIntExtra("postion", -1))
-                if (imageBit != null) {
+                if (imageBit != null) {    ///image validation for adding of the image
                     val path = saveImage(imageBit!!)
                     returnIntent.putExtra("imagePath", path)
                 }
                 returnIntent.putExtra("Name", editTextName.text.toString())
                 returnIntent.putExtra("Number", editTextPhone.text.toString())
-                returnIntent.putExtra("Email", editTextMail.text.toString())
-                setResult(Activity.RESULT_OK, returnIntent)
-                Log.d(TAG, "Data sent for edit from Edit ContactsActivity onClick of Button Save")
-                finish()
+                if(!edEmail.matches(emailPattern.toRegex())){
+                    editMl.requestFocus()
+                    editMl.setError("Enter valid mail ID")
+                }
+                else {
+                    returnIntent.putExtra("Email", edEmail)
+                    setResult(Activity.RESULT_OK, returnIntent)
+                    Log.d(TAG, "Data sent for edit from Edit ContactsActivity onClick of Button Save")
+                    finish()
+                }
             }
         }
     }
@@ -203,7 +228,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
     }
 
-
+///Grating permissions to the camera for setting upof the image and adding it to the storage
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -223,10 +248,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
                 val contentURI = data!!.data
                 try {
                     imageBit = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                    //val path = saveImage(imageBit!!)
-//                    Toast.makeText(this@Add_EditContactsActivity, "Image Saved!", Toast.LENGTH_SHORT).show()
-                    //image1!!.setImageBitmap(imageBit)
-                    Glide.with(this).load(imageBit).into(image1!!)
+                    Glide.with(this).load(imageBit).into(image1!!)   ///Use pof glide for the changing the image urls
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -239,27 +261,25 @@ class Add_EditContactsActivity : AppCompatActivity() {
         } else if (requestCode == CAMERA) {
 
             imageBit = data!!.extras!!.get("data") as Bitmap
-//            image1!!.setImageBitmap(imageBit)
             Glide.with(this).load(imageBit).into(image1!!)
-            /* saveImage(thumbnail)
-             Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show()*/
         }
     }
 
 
+    ///Saving the image onClick of the save button
     fun saveImage(myBitmap: Bitmap): String {
         val bytes = ByteArrayOutputStream()
         myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
         val wallpaperDirectory = File(
             (Environment.getExternalStorageDirectory()).toString() + IMAGE_DIRECTORY
         )
+
         // have the object build the directory structure, if needed.
         Log.d("fee", wallpaperDirectory.toString())
         val abc = wallpaperDirectory.mkdirs()
 
         try {
             Log.d("heel", wallpaperDirectory.toString())
-//            val f = File(wallpaperDirectory, ((Calendar.getInstance().getTimeInMillis()).toString() + ".png"))
             val f = File(wallpaperDirectory, editTextName.text.toString() + "contactImage.png")
             f.createNewFile()
             val fo = FileOutputStream(f)
@@ -281,12 +301,14 @@ class Add_EditContactsActivity : AppCompatActivity() {
         return ""
     }
 
+    //Three-dot menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (!isShowOptionsItem) return false
         menuInflater.inflate(com.example.contactcrud.R.menu.menu_items, menu)
         return true
     }
 
+    //Option Items of the three-dot menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val name = txtName.text.toString()
         val number = txtNumber.text.toString()
@@ -311,4 +333,3 @@ class Add_EditContactsActivity : AppCompatActivity() {
         return true
     }
 }
-
