@@ -4,7 +4,9 @@ Database not used, used MutableList instead.
 The application explains various features as 
 
 1.Toast 
+
 2.Adding/editing a contact
+
 3.deleting a contact
 4.storing pictures
 5.dynamic links using Firebase
