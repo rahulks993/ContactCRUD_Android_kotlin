@@ -2,19 +2,12 @@ package com.example.contactcrud
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_contacts.*
-import kotlinx.android.synthetic.main.edit_contacts.*
-import kotlinx.android.synthetic.main.list_item.*
-import java.text.FieldPosition
 
 
 class ContactsActivity : AppCompatActivity() {
@@ -51,12 +44,11 @@ class ContactsActivity : AppCompatActivity() {
 
         ///Button for adding the contact
         val floatBtn: View = findViewById(R.id.fab1)
-        floatBtn.setOnClickListener(View.OnClickListener {
+        floatBtn.setOnClickListener {
             Log.d(TAG, "Add Button Clicked")
             val i = Intent(applicationContext, Add_EditContactsActivity::class.java)
-//            i.putExtra("1", true)
             startActivityForResult(i, 1)
-        })
+        }
 
     }
 
@@ -67,7 +59,6 @@ class ContactsActivity : AppCompatActivity() {
             val phne = data?.getStringExtra("Number") ?: ""
             val email = data?.getStringExtra("Email") ?: ""
             val img = data?.getStringExtra("imagePath") ?: ""
-//            val addImg = data?.getStringExtra("addImgPath") ?:""
             val position = data?.getIntExtra("postion", -1) ?: -1
             val pstn = data?.getIntExtra("pos", -1) ?: -1
             val modelContact = Model(name, phne, email, img)

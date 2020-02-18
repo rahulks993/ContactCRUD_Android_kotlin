@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,7 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.regex.Pattern
 
 
 class Add_EditContactsActivity : AppCompatActivity() {
@@ -43,7 +41,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.contactcrud.R.layout.edit_contacts)
+        setContentView(R.layout.edit_contacts)
 
         ///To enable and disable three dot menu
         isShowOptionsItem = false
@@ -104,8 +102,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
         ///On click of the saving the  contact for add FAB and sending the data to the next activity
         buttonSave.setOnClickListener {
             ///Email validations
-            val addMl = findViewById<EditText>(R.id.editTextMail)
-            val adEmail = addMl.text.toString().trim()
+            val adEmail = findViewById<EditText>(R.id.editTextMail).text.toString().trim()
             val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
             val intent = Intent()
             intent.putExtra("Name", editTextName.text.toString())
@@ -118,8 +115,8 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
             ///Mail validation
             if(!adEmail.matches(emailPattern.toRegex())){
-                addMl.requestFocus()
-                addMl.setError("Enter valid mail ID")
+                findViewById<EditText>(R.id.editTextMail).requestFocus()
+                findViewById<EditText>(R.id.editTextMail).setError("Enter valid mail ID")
             }
             else {
                 intent.putExtra("Email",adEmail)
@@ -156,8 +153,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
             buttonSave.setOnClickListener {
                 Toast.makeText(this, "Contact Edited", Toast.LENGTH_LONG).show()
                 ///Email validations
-                val editMl = findViewById<EditText>(R.id.editTextMail)
-                val edEmail = editMl.text.toString().trim()
+                val edEmail = findViewById<EditText>(R.id.editTextMail).text.toString().trim()
                 val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"    ///Regex expression to check the mail expression
                 val returnIntent = Intent()
                 returnIntent.putExtra("postion", intent.getIntExtra("postion", -1))
@@ -168,8 +164,8 @@ class Add_EditContactsActivity : AppCompatActivity() {
                 returnIntent.putExtra("Name", editTextName.text.toString())
                 returnIntent.putExtra("Number", editTextPhone.text.toString())
                 if(!edEmail.matches(emailPattern.toRegex())){
-                    editMl.requestFocus()
-                    editMl.setError("Enter valid mail ID")
+                    findViewById<EditText>(R.id.editTextMail).requestFocus()
+                    findViewById<EditText>(R.id.editTextMail).setError("Enter valid mail ID")
                 }
                 else {
                     returnIntent.putExtra("Email", edEmail)
@@ -276,8 +272,6 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
         // have the object build the directory structure, if needed.
         Log.d("fee", wallpaperDirectory.toString())
-        val abc = wallpaperDirectory.mkdirs()
-
         try {
             Log.d("heel", wallpaperDirectory.toString())
             val f = File(wallpaperDirectory, editTextName.text.toString() + "contactImage.png")
@@ -304,7 +298,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
     //Three-dot menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (!isShowOptionsItem) return false
-        menuInflater.inflate(com.example.contactcrud.R.menu.menu_items, menu)
+        menuInflater.inflate(R.menu.menu_items, menu)
         return true
     }
 
@@ -314,7 +308,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
         val number = txtNumber.text.toString()
         val email = txtMail.text.toString()
 
-        if (item.itemId == com.example.contactcrud.R.id.delete) {
+        if (item.itemId == R.id.delete) {
             Toast.makeText(this, "Contact Deleted", Toast.LENGTH_LONG).show()
             Log.d(TAG, "Delete Item Clicked fromt he three dot menu")
             val retrnIntent = Intent()
@@ -327,7 +321,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
             shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, name + " - " + number + " - " + email);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, name + " - " + number + " - " + email)
             startActivity(Intent.createChooser(shareIntent, "Share"))
         }
         return true
