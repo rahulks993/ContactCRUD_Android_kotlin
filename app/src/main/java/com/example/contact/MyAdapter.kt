@@ -13,8 +13,9 @@ import kotlinx.android.synthetic.main.list_item.view.*
 class MyAdapter(val context: Context, var contacts: List<Model>) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-    //    var onShareClick = { _: String, _: String, _: String -> Unit }
-    var onCardClick = { _: String, _: String, _: String, _: String, _: Int -> Unit }
+    //    var onShareClick = { _: String, _: String, _: String -> Unit }    // This was for onClick of the share image then sharing the details
+    var onCardClick = { _: String, _: String, _: String, _: String, _: Int -> Unit }     ///Sharing the details to another screen onClick of a card view.
+
 
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,7 +24,7 @@ class MyAdapter(val context: Context, var contacts: List<Model>) :
             itemView.txvTitle2.text = cntct.number
             itemView.txvTitle3.text = cntct.email
 
-            if (!cntct.imgPth.isNullOrEmpty()) {
+            if (!cntct.imgPth.isNullOrEmpty()) {     //// SHaring the image of the contact captured
                 Glide.with(context).load(cntct.imgPth).into(itemView.imageContact)
             } else {
                 Glide.with(context).load(R.mipmap.ic_launcher).into(itemView.imageContact)
@@ -31,6 +32,8 @@ class MyAdapter(val context: Context, var contacts: List<Model>) :
             /* itemView.imgShare.setOnClickListener {
                  onShareClick(cntct.name, cntct.number, cntct.email)
              }*/
+
+            /// On card click sharing and sending the details to Add_Edit details screen
             itemView.setOnClickListener {
                 onCardClick(cntct.name, cntct.number, cntct.email, cntct.imgPth, pos)
             }
