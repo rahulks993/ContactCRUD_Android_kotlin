@@ -30,7 +30,8 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
     companion object {
         val TAG: String = Add_EditContactsActivity::class.java.simpleName
-        val IMAGE_DIRECTORY = "/demoApp123"
+        val IMAGE_DIRECTORY =
+            "/demoApp123"    ///For adding the images captured to the particular directory
     }
 
     private var isShowOptionsItem = true
@@ -66,7 +67,6 @@ class Add_EditContactsActivity : AppCompatActivity() {
             val mail = intent.getStringExtra("email")
             val imPath = intent.getStringExtra("imgPth")
 
-
             if (name != null) {
 //                val nameTextView = findViewById<TextView>(R.id.txtName)
                 isShowOptionsItem = true
@@ -96,7 +96,6 @@ class Add_EditContactsActivity : AppCompatActivity() {
                     .into(image1)
             }
 
-
         }
 
         ///On click of the saving the  contact for add FAB and sending the data to the next activity
@@ -114,12 +113,11 @@ class Add_EditContactsActivity : AppCompatActivity() {
             }
 
             ///Mail validation
-            if(!adEmail.matches(emailPattern.toRegex())){
+            if (!adEmail.matches(emailPattern.toRegex())) {
                 findViewById<EditText>(R.id.editTextMail).requestFocus()
                 findViewById<EditText>(R.id.editTextMail).setError("Enter valid mail ID")
-            }
-            else {
-                intent.putExtra("Email",adEmail)
+            } else {
+                intent.putExtra("Email", adEmail)
                 setResult(Activity.RESULT_OK, intent)
                 Log.d(TAG, "Data sent for add from Add ContactsActivity onClick of Button Save")
                 Toast.makeText(this, "Contact Added", Toast.LENGTH_LONG).show()
@@ -143,8 +141,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
             fab2.hide()
             buttonSave.visibility = View.VISIBLE
             image1.setOnClickListener { showPictureDialog() }    ////For adding image onClick of edit imagebutton
-            if (txtName.toString() == null || txtNumber.toString() == null || txtMail.toString() == null) {
-            } else {
+            if (!(!txtName.toString().isNotBlank() && !txtNumber.toString().isNotBlank() && !txtMail.toString().isNotBlank())) {
                 editTextName.setText(txtName.text.toString())
                 editTextPhone.setText(txtNumber.text.toString())
                 editTextMail.setText(txtMail.text.toString())
@@ -154,7 +151,8 @@ class Add_EditContactsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Contact Edited", Toast.LENGTH_LONG).show()
                 ///Email validations
                 val edEmail = findViewById<EditText>(R.id.editTextMail).text.toString().trim()
-                val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"    ///Regex expression to check the mail expression
+                val emailPattern =
+                    "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"    ///Regex expression to check the mail expression
                 val returnIntent = Intent()
                 returnIntent.putExtra("postion", intent.getIntExtra("postion", -1))
                 if (imageBit != null) {    ///image validation for adding of the image
@@ -163,14 +161,16 @@ class Add_EditContactsActivity : AppCompatActivity() {
                 }
                 returnIntent.putExtra("Name", editTextName.text.toString())
                 returnIntent.putExtra("Number", editTextPhone.text.toString())
-                if(!edEmail.matches(emailPattern.toRegex())){
+                if (!edEmail.matches(emailPattern.toRegex())) {
                     findViewById<EditText>(R.id.editTextMail).requestFocus()
                     findViewById<EditText>(R.id.editTextMail).setError("Enter valid mail ID")
-                }
-                else {
+                } else {
                     returnIntent.putExtra("Email", edEmail)
                     setResult(Activity.RESULT_OK, returnIntent)
-                    Log.d(TAG, "Data sent for edit from Edit ContactsActivity onClick of Button Save")
+                    Log.d(
+                        TAG,
+                        "Data sent for edit from Edit ContactsActivity onClick of Button Save"
+                    )
                     finish()
                 }
             }
@@ -224,7 +224,7 @@ class Add_EditContactsActivity : AppCompatActivity() {
 
     }
 
-///Grating permissions to the camera for setting upof the image and adding it to the storage
+    ///Grating permissions to the camera for setting upof the image and adding it to the storage
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -236,31 +236,29 @@ class Add_EditContactsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data1: Intent?) {
 
-        super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data1)
         if (requestCode == GALLERY) {
-            if (data != null) {
-                val contentURI = data!!.data
+            if (data1 != null) {
+                val contentURI = data1.data
                 try {
                     imageBit = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                    Glide.with(this).load(imageBit).into(image1!!)   ///Use pof glide for the changing the image urls
+                    Glide.with(this).load(imageBit)
+                        .into(image1!!)   ///Use of glide for the changing the image urls
 
                 } catch (e: IOException) {
                     e.printStackTrace()
                     Toast.makeText(this@Add_EditContactsActivity, "Failed!", Toast.LENGTH_SHORT)
                         .show()
                 }
-
             }
 
         } else if (requestCode == CAMERA) {
-
-            imageBit = data!!.extras!!.get("data") as Bitmap
+            imageBit = data1!!.extras!!.get("data") as Bitmap
             Glide.with(this).load(imageBit).into(image1!!)
         }
     }
-
 
     ///Saving the image onClick of the save button
     fun saveImage(myBitmap: Bitmap): String {
@@ -286,7 +284,6 @@ class Add_EditContactsActivity : AppCompatActivity() {
             )
             fo.close()
             Log.d("TAG", "File Saved::--->" + f.getAbsolutePath())
-
             return f.getAbsolutePath()
         } catch (e1: IOException) {
             e1.printStackTrace()

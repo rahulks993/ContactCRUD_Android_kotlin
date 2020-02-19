@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
             shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, buildDynamicLink());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, buildDynamicLink())
             startActivity(Intent.createChooser(shareIntent, getString(R.string.send_to)))
 
         }
@@ -35,32 +35,25 @@ class MainActivity : AppCompatActivity() {
         btnSendMsgToNextActivity.setOnClickListener {
             val message: String = etUserMessage.text.toString()
             val intent = Intent(this, SecondActivity::class.java)
-
             intent.putExtra(Constants.USER_MSG_KEY, message)
-
             startActivity(intent)
         }
 
         //BUtton for sharing via intents. Basically to understand intent sharing
         btnShareToOtherApps.setOnClickListener {
-
             val message: String = etUserMessage.text.toString()
-
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.putExtra(Intent.EXTRA_TEXT, message)
             intent.type = "text/plain"
-
             startActivity(Intent.createChooser(intent, "Please select app: "))
         }
 
         //This button takes to the next activity where you can see the contacts list there.
         btnRecyclerViewDemo.setOnClickListener {
-
             val intent = Intent(this, ContactsActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     //Building the dynamic link using Firebase
@@ -79,5 +72,4 @@ class MainActivity : AppCompatActivity() {
 
         return path
     }
-
 }

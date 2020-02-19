@@ -1,5 +1,7 @@
 package com.example.contactcrud
 
+/* This helps in adding the contacts. This a object class, one can dedit it according to there preference*/
+
 data class Model(val name: String, val number: String, val email: String, var imgPth: String)
 
 object Supplier {
